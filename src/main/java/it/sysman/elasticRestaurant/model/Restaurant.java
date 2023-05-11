@@ -1,6 +1,7 @@
 package it.sysman.elasticRestaurant.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
+@Document(indexName = "resturant")
 public class Restaurant {
 	@Id
 	private Long id;
