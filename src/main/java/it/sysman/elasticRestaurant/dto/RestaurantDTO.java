@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 public class RestaurantDTO {
 
+	private Long id;
 	private String placeId;
 	private String license;
 	private String osmType;

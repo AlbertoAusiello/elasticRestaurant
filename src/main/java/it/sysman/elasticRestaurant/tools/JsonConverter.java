@@ -26,15 +26,17 @@ public class JsonConverter {
 			result = result.replace("display_name", "displayName");
 			result = result.replace("house_number", "houseNumber");
 			result = result.replace("country_code", "countryCode");
-//			result = result.replace("country_code", "countryCode");
+			result = result.replace("town", "city");
+//			result = result.replace("town", "city");
+			
 			JsonArray arr = JsonParser.parseString(result).getAsJsonArray();
-			for (int i = 0; i < arr.size(); i++) {
-				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("quarter");
-				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("state");
-				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("city_district");
-				arr.get(i).getAsJsonObject().remove("boundingbox");
-				arr.get(i).getAsJsonObject().remove("class");
-			}
+//			for (int i = 0; i < arr.size(); i++) {
+//				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("quarter");
+//				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("state");
+//				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("city_district");
+//				arr.get(i).getAsJsonObject().remove("boundingbox");
+//				arr.get(i).getAsJsonObject().remove("class");
+//			}
 			result = arr.toString();
 			scan.close();
 			return result;
