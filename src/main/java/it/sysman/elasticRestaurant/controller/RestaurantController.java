@@ -2,7 +2,9 @@ package it.sysman.elasticRestaurant.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,26 +32,7 @@ public class RestaurantController {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	@PostConstruct
-	public void init() throws IOException {
-//		String fileName = "/elasticRestaurant/src/main/java/it/sysman/elasticRestaurant/data/start_restaurants.json";
-		ObjectMapper objM = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		RestaurantDTO [] rest=null;
-		try 
-		{
-			rest = objM.readValue(JsonConverter.toJava(new File("C:\\Users\\sarex\\Desktop\\start_restaurants.json")), RestaurantDTO[].class);
-		}
-		catch (IOException e) {e.printStackTrace();}
-		Address addr = null;
-		int i=0;
-		for (RestaurantDTO resturantDTO : rest) {
-			i++;
-			addr = modelMapper.map(resturantDTO.getAddress(), Address.class);
-			restService.createIndex(addr.getCountry().replace(" ", ""));
-			restService.indexRestaurants(addr.getCountry().replace(" ", ""), resturantDTO,i);
-			
-		}
-	}
+
 
 	
 }

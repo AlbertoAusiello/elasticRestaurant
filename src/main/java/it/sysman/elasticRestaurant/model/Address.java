@@ -85,7 +85,6 @@ public class Address {
 	
 	@Field
 	@JsonProperty("town")
-	@JsonIgnore
 	private String town;
 	
 	@Field

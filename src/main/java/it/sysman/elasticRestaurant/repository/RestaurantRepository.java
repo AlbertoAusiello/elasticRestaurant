@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import it.sysman.elasticRestaurant.model.Restaurant;
 
 @Repository
-public interface RestaurantRepository extends ElasticsearchRepository<Restaurant, Long> {
+public interface RestaurantRepository  {
 
 }

@@ -1,5 +1,6 @@
 package it.sysman.elasticRestaurant.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
+@JsonIgnoreProperties(value={ "boundingbox" })
 public class RestaurantDTO {
 
 	private Long id;
