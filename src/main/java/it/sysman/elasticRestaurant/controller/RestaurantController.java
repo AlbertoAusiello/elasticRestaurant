@@ -1,26 +1,15 @@
 package it.sysman.elasticRestaurant.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import it.sysman.elasticRestaurant.model.Restaurant;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import it.sysman.elasticRestaurant.dto.RestaurantDTO;
-import it.sysman.elasticRestaurant.model.Address;
-import it.sysman.elasticRestaurant.model.Restaurant;
 import it.sysman.elasticRestaurant.service.RestaurantServiceIMPL;
-import it.sysman.elasticRestaurant.tools.JsonConverter;
-import jakarta.annotation.PostConstruct;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -31,8 +20,26 @@ public class RestaurantController {
 	
 	@Autowired
 	private ModelMapper modelMapper;
-	
 
 
-	
+	@GetMapping("/restaurant/{city}")
+	public ResponseEntity<List<Restaurant>>getAllRestaurant(@PathVariable("city") String city){
+		try {
+			return new ResponseEntity<List<Restaurant>>(restService.getAllRestaurants(city),HttpStatus.OK);
+		}catch(Exception e){
+			e.printStackTrace();
+			return new ResponseEntity<List<Restaurant>>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@DeleteMapping("/restaurant/{id}/{city}")
+	public ResponseEntity<String>deleteByID(@PathVariable Long id,@PathVariable String city){
+		try {
+			return new ResponseEntity<String>(restService.deleteByID(id,city),HttpStatus.OK);
+		}catch(Exception e){
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
 }

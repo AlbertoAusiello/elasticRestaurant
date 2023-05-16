@@ -1,9 +1,7 @@
 package it.sysman.elasticRestaurant.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -17,10 +15,8 @@ import lombok.ToString;
 
 @JsonIgnoreProperties(value={ "boundingbox" })
 public class Restaurant {
+
 	@Id
-	private Long id;
-	
-	@Field
 	@JsonProperty("place_id")
 	private Long placeId;
 	

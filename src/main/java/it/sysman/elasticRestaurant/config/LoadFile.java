@@ -1,7 +1,6 @@
 package it.sysman.elasticRestaurant.config;
 
 import it.sysman.elasticRestaurant.controller.RestaurantController;
-import it.sysman.elasticRestaurant.service.RestaurantService;
 import it.sysman.elasticRestaurant.service.RestaurantServiceIMPL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -20,7 +19,7 @@ import java.io.IOException;
         RestaurantController restaurantController;
 
         @EventListener
-        public void onApplicationEvent(ContextRefreshedEvent event) throws IOException {
+        public void onApplicationEvent(ContextRefreshedEvent event) {
             serviceRestaurant.saveFile();
 
         }
