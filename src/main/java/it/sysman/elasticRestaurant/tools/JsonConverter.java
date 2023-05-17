@@ -29,13 +29,6 @@ public class JsonConverter {
 //			result = result.replace("town", "city");
 			
 			JsonArray arr = JsonParser.parseString(result.toString()).getAsJsonArray();
-//			for (int i = 0; i < arr.size(); i++) {
-//				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("quarter");
-//				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("state");
-//				arr.get(i).getAsJsonObject().get("address").getAsJsonObject().remove("city_district");
-//				arr.get(i).getAsJsonObject().remove("boundingbox");
-//				arr.get(i).getAsJsonObject().remove("class");
-//			}
 			result = new StringBuilder(arr.toString());
 			scan.close();
 			return result.toString();

@@ -27,14 +27,8 @@ public class ElasticsearchConfig {
             .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
 //            		.setDefaultHeaders(compatibilityHeaders()));
 
-    RestHighLevelClient client = new RestHighLevelClient(builder);
-    return client;
+        return new RestHighLevelClient(builder);
 }
-
-//    private Header[] compatibilityHeaders() {
-//        return new Header[]{new Header(HttpHeaders.ACCEPT, "application/vnd.elasticsearch+json;compatible-with=7"),
-//        		new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/vnd.elasticsearch+json;compatible-with=7")};
-//        }
 
 }
 

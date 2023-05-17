@@ -9,13 +9,11 @@ import java.util.List;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import it.sysman.elasticRestaurant.model.Restaurant;
 import it.sysman.elasticRestaurant.repository.RestaurantRepositoryIMPL;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,23 +63,26 @@ public class RestaurantServiceIMPL implements RestaurantService {
 
 		}
 	}
-	public String createIndex(String city) throws IOException {
+	public  String saveUpdateRestaurant(RestaurantDTO r) throws IOException {
+		Restaurant restaurant;
+		restaurant =  modelMapper.map(r,Restaurant.class);
+		if(restaurant.getAddress().getCity()!=null) {
+			createIndex(restaurant.getAddress().getCity());
+		}
+		else {
+			createIndex(restaurant.getAddress().getTown());
+		}
+		return repo.createOrUpdate(restaurant);
+
+	}
+	public void createIndex(String city) throws IOException {
 	        String indexName = "restaurant_" + city.toLowerCase() + "_index";
 	        if (!indexExists(indexName)) {
 	            CreateIndexRequest request = new CreateIndexRequest(indexName);
 	            request.settings(Settings.builder().put("index.number_of_shards", 1).put("index.number_of_replicas", 0));
 	            client.indices().create(request, RequestOptions.DEFAULT);
-	        }
-			return null;
-	    }
-	 public void indexRestaurants(String city, RestaurantDTO rest, Long i) throws IOException {
-		 String indexName = "restaurant_" + city.toLowerCase() + "_index";
-
-		 rest.setId(Long.parseLong(String.valueOf(i)));
-		 IndexRequest request = new IndexRequest(indexName);
-		 request.id(String.valueOf(i));
-		 request.source(convertObjectToJsonBytes(rest), XContentType.JSON);
-	 }
+			}
+	}
 	 private boolean indexExists(String indexName) throws IOException {
 	        GetIndexRequest request = new GetIndexRequest(indexName);
 	        return client.indices().exists(request, RequestOptions.DEFAULT);
@@ -93,12 +94,36 @@ public class RestaurantServiceIMPL implements RestaurantService {
 	    }
 
 
-	public List<Restaurant> getAllRestaurants(String city) throws IOException {
-		return repo.getAll(city);
-	}
+	public List<RestaurantDTO> getAllRestaurants(String city) throws IOException {
+		List<Restaurant> restaurants = repo.getAll(city);
+		List<RestaurantDTO>restaurantDTOS = new ArrayList<>();
+		RestaurantDTO rdto;
+		for (Restaurant restaurant: restaurants) {
+			rdto =  modelMapper.map(restaurant,RestaurantDTO.class);
+			restaurantDTOS.add(rdto);
+		}
 
+	return restaurantDTOS;
+	}
+	public RestaurantDTO getById(Long placeId,String city) throws IOException {
+		Restaurant restaurant = repo.getById(placeId,city);
+		RestaurantDTO rdto;
+		rdto =  modelMapper.map(restaurant,RestaurantDTO.class);
+		return rdto;
+	}
 	public String deleteByID(Long id,String city) throws IOException {
 		return repo.deleteById(id,city);
+	}
+
+	public List<RestaurantDTO>searchByLocation(double lat1, double lon1, double lat2, double lon2, String city) throws IOException {
+		List<Restaurant> restaurants = repo.getAll(city);
+		List<RestaurantDTO>restaurantDTOS = new ArrayList<>();
+		RestaurantDTO rdto;
+		for (Restaurant restaurant: restaurants) {
+			rdto =  modelMapper.map(restaurant,RestaurantDTO.class);
+			restaurantDTOS.add(rdto);
+		}
+		return restaurantDTOS;
 	}
 }
 

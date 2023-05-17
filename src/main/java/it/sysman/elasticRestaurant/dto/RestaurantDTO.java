@@ -1,6 +1,7 @@
 package it.sysman.elasticRestaurant.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,17 +14,27 @@ import lombok.Setter;
 @JsonIgnoreProperties(value={ "boundingbox" })
 public class RestaurantDTO {
 
-	private Long id;
-	private String placeId;
+	@JsonProperty("place_id")
+	private Long placeId;
+	@JsonProperty("licence")
 	private String license;
+	@JsonProperty("osm_type")
 	private String osmType;
-	private String osmId;
+	@JsonProperty("osm_id")
+	private Long osmId;
+	@JsonProperty("lat")
 	private String lat;
+	@JsonProperty("lon")
 	private String lon;
+	@JsonProperty("display_name")
 	private String displayName;
+	@JsonProperty("type")
 	private String type;
-	private String importance;
+	@JsonProperty("importance")
+	private double importance;
+	@JsonProperty("icon")
 	private String icon;
+	@JsonProperty("address")
 	private AddressDTO address;
 
 	

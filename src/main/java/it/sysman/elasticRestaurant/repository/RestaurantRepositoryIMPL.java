@@ -4,14 +4,8 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.*;
 
 import co.elastic.clients.elasticsearch.core.search.Hit;
-import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
-import com.fasterxml.jackson.core.ObjectCodec;
 import it.sysman.elasticRestaurant.model.Restaurant;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.index.mapper.ObjectMapper;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -72,7 +66,7 @@ public class RestaurantRepositoryIMPL implements RestaurantRepository{
     @Override
     public List<Restaurant> getAll(String cityIndex) throws IOException {
             String indexName="restaurant_"+cityIndex.toLowerCase()+"_index";
-            SearchRequest searchRequest = SearchRequest.of(s -> s.index(indexName));
+            SearchRequest searchRequest = SearchRequest.of(s -> s.index(indexName).size(10000));
             SearchResponse<Restaurant> searchResponse = elasticsearchClient.search(searchRequest, Restaurant.class);
             List<Hit<Restaurant>> hits = searchResponse.hits().hits();
             List<Restaurant> r = new ArrayList<>();
@@ -82,12 +76,6 @@ public class RestaurantRepositoryIMPL implements RestaurantRepository{
             }
             return r;
         }
-
-
-    @Override
-    public void delete() {
-
-    }
 
     @Override
     public String deleteById(Long rId, String city) throws IOException {
@@ -106,52 +94,22 @@ public class RestaurantRepositoryIMPL implements RestaurantRepository{
     public List<Restaurant> searchByLocation(double lat1, double lon1, double lat2, double lon2, String city) throws IOException {
         String indexName = "restaurant_" + city.toLowerCase() + "_index";
 
-        SearchRequest searchRequest = SearchRequest.of(s -> s.index(indexName));
+        SearchRequest searchRequest = SearchRequest.of(s -> s.index(indexName).size(10000));
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.boolQuery()
                 .must(QueryBuilders.rangeQuery("location.lat").gte(lat1).lte(lat2))
                 .must(QueryBuilders.rangeQuery("location.lon").gte(lon1).lte(lon2)));
 
-        SearchResponse response = elasticsearchClient.search(
-                SearchRequest.of(s -> s.index(indexName)
-                        .source(searchSourceBuilder)
-                );
+        SearchResponse<Restaurant> response = elasticsearchClient.search(searchRequest,Restaurant.class);
 
-
-        SearchResponse response = elasticsearchClient.search(searchRequest);
-
+        List<Hit<Restaurant>> hits = response.hits().hits();
         List<Restaurant> restaurants = new ArrayList<>();
-        for (SearchHit hit : response.getHits().getHits()) {
-            Restaurant restaurant = objectMapper.readValue(hit.getSourceAsString(), Restaurant.class);
-            restaurants.add(restaurant);
+        for(Hit<Restaurant> object : hits){
+            System.out.print(object.source());
+            restaurants.add(object.source());
         }
-
         return restaurants;
     }
-
-//    public List<Restaurant> searchByLocation(double lat1, double lon1, double lat2, double lon2, String city) throws IOException {
-//        String indexName = "restaurant_" + city.toLowerCase() + "_index";
-//        SearchResponse response = elasticsearchClient.search(
-//                new SearchRequest.Builder()
-//                        .index(indexName)
-//                        .source(
-//                                new SearchSourceBuilder.IndexBoost()
-//                                        .query(
-//                                                QueryBuilders.boolQuery()
-//                                                        .must(QueryBuilders.rangeQuery("location.lat").gte(lat1).lte(lat2))
-//                                                        .must(QueryBuilders.rangeQuery("location.lon").gte(lon1).lte(lon2))
-//                                        )
-//                        )
-//                        .build()
-//        );
-//        SearchHit[] hits = response.hits().hits();
-//        List<Restaurant> restaurants = new ArrayList<>();
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        for (SearchHit hit : hits) {
-//            restaurants.add(objectMapper.readValue(hit.sourceAsString(), Restaurant.class));
-//        }
-//        return restaurants;
-//    }
 
 
 }
