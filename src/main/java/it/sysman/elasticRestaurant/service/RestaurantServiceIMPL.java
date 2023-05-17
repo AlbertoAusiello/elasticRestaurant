@@ -40,6 +40,8 @@ public class RestaurantServiceIMPL implements RestaurantService {
 	public void saveFile() {
 		ObjectMapper obj=new ObjectMapper().configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
 		Restaurant[]rest;
+		int count=0;
+		int skipped=0;
 		try {
 			rest=obj.readValue(new File("C:\\Users\\sarex\\Desktop\\start_restaurants.json"), Restaurant[].class);
 			List<Restaurant> risto = new ArrayList<>(Arrays.asList(rest));
@@ -48,15 +50,22 @@ public class RestaurantServiceIMPL implements RestaurantService {
 					createIndex(restaurant.getAddress().getCity());
 					if(repo.getById(restaurant.getPlaceId(),restaurant.getAddress().getCity())==null) {
 						repo.createOrUpdate(restaurant);
-					}
+						count++;
+					}else
+						skipped++;
 				}
 				else {
 					createIndex(restaurant.getAddress().getTown());
 					if(repo.getById(restaurant.getPlaceId(),restaurant.getAddress().getTown())==null) {
 						repo.createOrUpdate(restaurant);
-					}
+						count++;
+					}else
+						skipped++;
 				}
 			}
+			System.out.println("elementi inseriti: "+count);
+			System.out.println("elementi saltati: "+skipped);
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,7 +92,8 @@ public class RestaurantServiceIMPL implements RestaurantService {
 	            client.indices().create(request, RequestOptions.DEFAULT);
 			}
 	}
-	 private boolean indexExists(String indexName) throws IOException {
+
+	private boolean indexExists(String indexName) throws IOException {
 	        GetIndexRequest request = new GetIndexRequest(indexName);
 	        return client.indices().exists(request, RequestOptions.DEFAULT);
 	    }
